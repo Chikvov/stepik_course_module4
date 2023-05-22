@@ -16,3 +16,4 @@ class ProductPageLocators():
     PRODUCT_NAME = (By.CLASS_NAME, "content h1")
     ADD_MESSAGE_PRODUCT_NAME = (By.CSS_SELECTOR, "#messages > div:first-child strong")
     ADD_MESSAGE_PRODUCT_PRICE = (By.CSS_SELECTOR, "#messages > div:last-child strong")
+    SUCCESS_MESSAGE = (By.CLASS_NAME, "alert-success")
