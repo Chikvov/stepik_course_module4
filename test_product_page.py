@@ -1,26 +1,44 @@
 from .pages.product_page import ProductPage
 from .pages.basket_page import BasketPage
-# import time
+from .pages.login_page import LoginPage
+import time
 import pytest
 
 main_page_link = "http://selenium1py.pythonanywhere.com/"
 link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
-template = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer"
-links = list(map(lambda x: template + str(x), range(0, 7)))
-links.append(pytest.param(template + "7", marks=pytest.mark.xfail))
-links.append(template + "8")
-links.append(template + "9")
+# template = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer"
+# links = list(map(lambda x: template + str(x), range(0, 7)))
+# links.append(pytest.param(template + "7", marks=pytest.mark.xfail))
+# links.append(template + "8")
+# links.append(template + "9")
 
 
-@pytest.mark.parametrize('link', links)
-def test_guest_can_add_product_to_basket(browser, link):
-    page = ProductPage(browser, link)
-    page.open()
-    page.add_to_basket()
-    page.solve_quiz_and_get_code()
-    # time.sleep(10)
-    page.add_message_is_correct()
-    page.basket_price_message_is_correct()
+@pytest.mark.add_to_basket_user
+class TestUserAddToBasketFromProductPage():
+    @pytest.fixture(scope='function', autouse=True)
+    def setup(self, browser):
+        page = ProductPage(browser, link)
+        page.open()
+        page.go_to_login_page()
+        page = LoginPage(browser, browser.current_url)
+        password = str(time.time())
+        email = str(time.time()) + "@fakemail.org"
+        page.register_new_user(email, password)
+        page.should_be_authorized_user()
+
+    def test_user_cant_see_success_message(self, browser):
+        page = ProductPage(browser, link)
+        page.open()
+        page.should_not_be_success_message()
+
+    def test_user_can_add_product_to_basket(self, browser):
+        page = ProductPage(browser, link)
+        page.open()
+        page.add_to_basket()
+        # page.solve_quiz_and_get_code()
+        # time.sleep(10)
+        page.add_message_is_correct()
+        page.basket_price_message_is_correct()
 
 
 @pytest.mark.xfail(reason="negative test")
@@ -28,12 +46,6 @@ def test_guest_cant_see_success_message_after_adding_product_to_basket(browser):
     page = ProductPage(browser, link)
     page.open()
     page.add_to_basket()
-    page.should_not_be_success_message()
-
-
-def test_guest_cant_see_success_message(browser):
-    page = ProductPage(browser, link)
-    page.open()
     page.should_not_be_success_message()
 
 
