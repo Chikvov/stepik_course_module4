@@ -1,6 +1,4 @@
 import pytest
-
-
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as COptions
 from selenium.webdriver.firefox.options import Options as FOptions
@@ -30,7 +28,6 @@ def browser(request):
         browser = webdriver.Firefox(options=options)
     else:
         raise pytest.UsageError("--browser_name should be chrome or firefox")
-    # browser.implicitly_wait(10)
     yield browser
     print("\nquit browser..")
     browser.quit()
